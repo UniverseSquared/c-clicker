@@ -1,0 +1,56 @@
+-- Variables --
+
+local w, h = term.getSize()
+local points = 0
+local pointsPerSecond = 0
+local running = true
+local firstUnlocked = false
+
+-- Functions --
+
+function clear()
+	term.clear()
+	term.setCursorPos(1, 1)
+end
+
+function drawScreen()
+	term.setBackgroundColor(colors.white)
+	term.setTextColor(colors.black)
+	clear()
+	term.setCursorPos(2, 2)
+	write("Points: " .. points .. "  Points Per Second: " .. pointsPerSecond)
+	paintutils.drawFilledBox(2, 4, 9, 6, colors.lightBlue)
+	term.setCursorPos(3, 5)
+	write("Click")
+	if firstUnlocked == true then
+		paintutils.drawFilledBox(2, 8, 13, 10, colors.lightBlue)
+		term.setCursorPos(3, 9)
+		write("Buy 1 PPS")
+	end
+end
+
+-- Main Code --
+
+local id = os.startTimer(1)
+clear()
+while running do
+	if points >= 10 then
+		firstUnlocked = true
+	end
+	drawScreen()
+	local event, button, x, y = os.pullEvent()
+	if event == "mouse_click" then
+		if x >= 2 and y >= 4 and x <= 9 and y <= 6 and button == 1 then
+			points = points + 1
+		elseif x >= 2 and y >= 8 and x <= 13 and y <= 10 and button == 1 then
+			if points >= 10 then
+				pointsPerSecond = pointsPerSecond + 1
+				points = points - 10
+			end
+		end
+	elseif event == "timer" then
+		local id = os.startTimer(1)
+		points = points + pointsPerSecond
+		drawScreen()
+	end
+end
