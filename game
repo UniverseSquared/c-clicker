@@ -5,6 +5,7 @@ local points = 0
 local pointsPerSecond = 0
 local running = true
 local firstUnlocked = false
+local secondUnlocked = false
 
 -- Functions --
 
@@ -27,6 +28,11 @@ function drawScreen()
 		term.setCursorPos(3, 9)
 		write("Buy 1 PPS")
 	end
+	if secondUnlocked == true then
+		paintutils.drawFilledBox(2, 12, 14, 14, colors.lightBlue)
+		term.setCursorPos(3, 13)
+		write("Buy 10 PPS")
+	end
 end
 
 -- Main Code --
@@ -37,6 +43,9 @@ while running do
 	if points >= 10 then
 		firstUnlocked = true
 	end
+	if points >= 100 then
+		secondUnlocked = true
+	end
 	drawScreen()
 	local event, button, x, y = os.pullEvent()
 	if event == "mouse_click" then
@@ -46,6 +55,11 @@ while running do
 			if points >= 10 then
 				pointsPerSecond = pointsPerSecond + 1
 				points = points - 10
+			end
+		elseif x >= 2 and y >= 12 and x <= 14 and y <= 14 and button == 1 then
+			if points >= 100 then
+				pointsPerSecond = pointsPerSecond + 10
+				points = points - 100
 			end
 		end
 	elseif event == "timer" then
